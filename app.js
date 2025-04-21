@@ -8,6 +8,8 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
+
 
 // ✅ 전통주 결과 설명 및 이미지 맵
 const descriptions = {
