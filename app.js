@@ -14,6 +14,9 @@ const results = {};
 
 // Webhook POST 처리
 app.post("/webhook", upload.none(), (req, res) => {
+  console.log("✅ 받은 요청:", req.body);  
+
+  
   const data = req.body;
   const submissionID = data["submissionID"];
   const q1 = data["Q1. 오늘은 떨리는 소개팅!"];
