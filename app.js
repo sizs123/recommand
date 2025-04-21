@@ -35,7 +35,8 @@ app.post('/webhook', upload.none(), (req, res) => {
 
   const recommendation = Object.entries(drinks).sort((a, b) => b[1] - a[1])[0][0];
   const safeFile = encodeURIComponent(recommendation);
-  res.redirect(302, `/result-${safeFile}.html`);
+  res.redirect(302, `/result.html?drink=${safeFile}`);
+
 });
 
 app.listen(port, () => {
