@@ -1,19 +1,26 @@
-
 const express = require('express');
 const multer = require('multer');
-const path = require('path');
+const upload = multer();
 
 const app = express();
-const upload = multer();
 const port = process.env.PORT || 3000;
 
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public')); // Serve static files from public folder
 
+// ✅ Webhook 엔드포인트
 app.post('/webhook', upload.none(), (req, res) => {
   const data = req.body;
-  const pretty = data.pretty || "";
+
+  const q1 = data["Q1. 오늘은 떨리는 소개팅!"];
+  const q2 = data["Q2. 조식에서 꼭 먹는 메뉴는?"];
+  const q3 = data["Q3. 노래방 선곡 스타일은?"];
+  const q4 = data["Q4. 가장 끌리는 운동은?"];
+  const q5 = data["Q5. 친구들과 모임할 때 나는?"];
+  const q6 = data["Q6. 여행가서 식당 고를 때 나는?"];
+  const q7 = data["Q7. 여운이 남는 영화는?"];
+  const q8 = data["Q8. 마무리할 때 듣는 음악 스타일은?"];
 
   const drinks = {
     "두곡": 0,
@@ -22,27 +29,25 @@ app.post('/webhook', upload.none(), (req, res) => {
     "국교1573": 0,
     "니하오": 0,
     "장향형": 0,
-    "청향형": 0
+    "청향형": 0,
   };
 
-  const answer = (text) => pretty.includes(text);
-
-  if (answer("웃는 모습이 귀엽고 스윗한 스타일")) { drinks["두곡"]++; drinks["장향형"]++; }
-  if (answer("말수가 적지만 깊이 있는 분위기")) { drinks["대곡주"]++; drinks["명냥"]++; drinks["국교1573"]++; }
-  if (answer("깔끔하고 단정한 도시 스타일")) { drinks["명냥"]++; drinks["청향형"]++; }
-  if (answer("갓 구운 달콤한 와플")) { drinks["두곡"]++; drinks["장향형"]++; }
-  if (answer("오래 끓인 깊은 맛의 미소된장국")) { drinks["대곡주"]++; drinks["명냥"]++; drinks["국교1573"]++; }
-  if (answer("시원하고 개운한 과일 샐러드")) { drinks["명냥"]++; drinks["청향형"]++; }
+  if (q1 === "웃는 모습이 귀엽고 스윗한 스타일 🍭") {
+    drinks["두곡"] += 1;
+    drinks["장향형"] += 1;
+  } else if (q1 === "말수가 적지만 깊이 있는 분위기 📚") {
+    drinks["대곡주"] += 1;
+    drinks["명냥"] += 1;
+    drinks["국교1573"] += 1;
+  } else if (q1 === "깔끔하고 단정한 도시 스타일 🏙️") {
+    drinks["명냥"] += 1;
+    drinks["청향형"] += 1;
+  }
 
   const recommendation = Object.entries(drinks).sort((a, b) => b[1] - a[1])[0][0];
+  const message = `당신에게 어울리는 전통주는 "${recommendation}" 입니다!`;
 
-  // 클라이언트에게 추천 결과를 localStorage에 저장하고 result.html로 이동시키는 HTML 응답 전송
-  res.send(`
-    <html><head><meta charset="UTF-8"><script>
-      localStorage.setItem('drink', '${recommendation}');
-      window.location.href = '/result.html';
-    </script></head><body></body></html>
-  `);
+  res.redirect(`/result.html?drink=${recommendation}&message=${encodeURIComponent(message)}`);
 });
 
 app.listen(port, () => {
