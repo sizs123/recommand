@@ -1,3 +1,4 @@
+
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -34,9 +35,14 @@ app.post('/webhook', upload.none(), (req, res) => {
   if (answer("시원하고 개운한 과일 샐러드")) { drinks["명냥"]++; drinks["청향형"]++; }
 
   const recommendation = Object.entries(drinks).sort((a, b) => b[1] - a[1])[0][0];
-  const safeFile = encodeURIComponent(recommendation);
-  res.redirect(302, `/result.html?drink=${safeFile}`);
 
+  // 클라이언트에게 추천 결과를 localStorage에 저장하고 result.html로 이동시키는 HTML 응답 전송
+  res.send(`
+    <html><head><meta charset="UTF-8"><script>
+      localStorage.setItem('drink', '${recommendation}');
+      window.location.href = '/result.html';
+    </script></head><body></body></html>
+  `);
 });
 
 app.listen(port, () => {
