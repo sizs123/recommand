@@ -10,6 +10,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // ✅ Webhook 엔드포인트
 app.post('/webhook', upload.none(), (req, res) => {
+  console.log("✅ Webhook 도착");
+  console.log(req.body);  // <-- 콘솔에서 확인해야 응답 여부 판단 가능!
+
   const data = req.body;
 
   const q1 = data["Q1. 오늘은 떨리는 소개팅!"];
@@ -21,7 +24,6 @@ app.post('/webhook', upload.none(), (req, res) => {
   const q7 = data["Q7. 여운이 남는 영화는?"];
   const q8 = data["Q8. 마무리할 때 듣는 음악 스타일은?"];
 
-  // ✅ 기본 점수 배열 초기화
   const drinks = {
     "두곡": 0,
     "대곡주": 0,
@@ -45,20 +47,16 @@ app.post('/webhook', upload.none(), (req, res) => {
     drinks["청향형"] += 1;
   }
 
-  // ✅ (Q2 ~ Q8도 동일 방식으로 추가 예정)
-  // ...
+  // (Q2 ~ Q8도 추가 예정...)
 
-  // ✅ 최고 점수인 술 찾기
   const recommendation = Object.entries(drinks).sort((a, b) => b[1] - a[1])[0][0];
   const score = drinks[recommendation];
 
-  // ✅ 간단한 메시지
   const message = `당신에게 어울리는 전통주는 "${recommendation}" 입니다!`;
 
   res.json({ recommendation, score, message });
 });
 
-// ✅ 서버 실행 로그 (백틱 없이 안전하게)
 app.listen(port, () => {
   console.log("✅ Server is running on port " + port);
 });
