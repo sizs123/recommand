@@ -9,18 +9,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// 결과 저장용 임시 객체
+// 메모리에 결과 저장 (테스트용)
 const results = {};
 
-// Webhook POST 처리
 app.post("/webhook", upload.none(), (req, res) => {
-  console.log("✅ 받은 요청:", req.body);  
+  console.log("✅ 받은 요청:", req.body);
 
-  
   const data = req.body;
-  const submissionID = data["submissionID"];
-  const q1 = data["Q1. 오늘은 떨리는 소개팅!"];
-  const q2 = data["Q2. 조식에서 꼭 먹는 메뉴는?"];
+  const submissionID = data["event_id"]; // ✅ 여기 중요
+
+  const q1 = data["q2_q1"]; // Jotform 필드명 확인
+  const q2 = data["q5_q2"];
 
   const drinks = {
     "두곡": 0,
@@ -43,16 +42,20 @@ app.post("/webhook", upload.none(), (req, res) => {
   const recommendation = Object.entries(drinks).sort((a, b) => b[1] - a[1])[0][0];
   const message = `당신에게 어울리는 전통주는 "${recommendation}" 입니다!`;
 
-  // 메모리에 저장
   if (submissionID) {
     results[submissionID] = message;
   }
 
-  // 리디렉션
-  res.redirect(`/result.html?id=${event_id}`);
+  // ✅ 클라이언트에서 localStorage에 ID 저장하고 redirect
+  res.send(`
+    <script>
+      localStorage.setItem("id", "${submissionID}");
+      window.location.href = "/result.html";
+    </script>
+  `);
 });
 
-// 추천 결과 조회용 GET 엔드포인트
+// 결과 조회용 엔드포인트
 app.get("/result-data/:id", (req, res) => {
   const id = req.params.id;
   const message = results[id];
@@ -63,7 +66,6 @@ app.get("/result-data/:id", (req, res) => {
   }
 });
 
-// 서버 시작
 app.listen(port, () => {
   console.log("✅ Server is running on port " + port);
 });
