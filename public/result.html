@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>추천 결과</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    img {
+      width: 300px;
+      border-radius: 16px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="title">✨ 추천 결과를 불러오는 중...</h1>
+  <img id="image" src="" alt="" style="display:none;" />
+  <p id="desc"></p>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const drink = decodeURIComponent(params.get("drink") || "").trim();
+
+    const info = {
+
+      "두곡": { desc: "부드럽고 달콤한 매력을 지닌 최고의 선택!", img: "https://yourcdn.com/images/dugok.jpg" }, "대곡주": { desc: "깊은 풍미와 정갈한 분위기를 담은 술.", img: "https://yourcdn.com/images/daegokju.jpg" }, "명냥": { desc: "산뜻한 향과 감성적인 피니시가 특징!", img: "https://yourcdn.com/images/myeongnyang.jpg" }, "국교1573": { desc: "무게감 있는 묵직한 향과 맛.", img: "https://yourcdn.com/images/gukgyo.jpg" }, "니하오": { desc: "부드럽고 친숙한 분위기에 딱!", img: "https://yourcdn.com/images/nihao.jpg" }, "장향형": { desc: "진한 향과 숙성미가 느껴지는 술.", img: "https://yourcdn.com/images/janghyang.jpg" }, "청향형": { desc: "깔끔하고 시원한 향으로 가볍게!", img: "https://yourcdn.com/images/cheonghyang.jpg" }
+
+    };
+
+    if (drink && info[drink]) {
+      document.getElementById("title").innerText = `🍶 당신에게 어울리는 전통주는 [${drink}]입니다!`;
+      document.getElementById("desc").innerText = info[drink].desc;
+      document.getElementById("image").src = info[drink].img;
+      document.getElementById("image").style.display = 'block';
+    } else {
+      document.getElementById("title").innerText = "추천 결과를 찾을 수 없습니다.";
+    }
+  </script>
+</body>
+</html>
