@@ -49,7 +49,7 @@ app.post("/webhook", upload.none(), (req, res) => {
   }
 
   // 리디렉션
-  res.redirect(`/result.html?id=${submissionID}`);
+  res.redirect(`/result.html?id=${event_id}`);
 });
 
 // 추천 결과 조회용 GET 엔드포인트
