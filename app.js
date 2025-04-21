@@ -1,15 +1,3 @@
-
-const express = require('express');
-const multer = require('multer');
-const upload = multer();
-
-const app = express();
-const port = process.env.PORT || 3000;
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public')); // 정적 파일 서빙
-
 app.post('/webhook', upload.none(), (req, res) => {
   const data = req.body;
 
@@ -32,6 +20,7 @@ app.post('/webhook', upload.none(), (req, res) => {
     "청향형": 0,
   };
 
+  // Q1
   if (q1 === "웃는 모습이 귀엽고 스윗한 스타일 🍭") {
     drinks["두곡"] += 1;
     drinks["장향형"] += 1;
@@ -44,14 +33,12 @@ app.post('/webhook', upload.none(), (req, res) => {
     drinks["청향형"] += 1;
   }
 
-  const recommendation = Object.entries(drinks).sort((a, b) => b[1] - a[1])[0][0];
-  const score = drinks[recommendation];
-  const message = `당신에게 어울리는 전통주는 "${recommendation}" 입니다!`;
-
-  // 메시지를 쿼리로 넘겨서 result.html이 직접 표시하도록
-  res.redirect(`/result.html?message=${encodeURIComponent(message)}`);
-});
-
-app.listen(port, () => {
-  console.log("✅ Server is running on port " + port);
-});
+  // Q2
+  if (q2 === "갓 구운 달콤한 와플 🧇") {
+    drinks["두곡"] += 1;
+    drinks["장향형"] += 1;
+  } else if (q2 === "오래 끓인 깊은 맛의 미소된장국 🍲") {
+    drinks["대곡주"] += 1;
+    drinks["명냥"] += 1;
+    drinks["국교1573"] += 1;
+  } else if (q2 === "시원하고 개운
