@@ -1,3 +1,4 @@
+
 const express = require('express');
 const multer = require('multer');
 const upload = multer();
@@ -7,9 +8,8 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public')); // Serve static files from public folder
+app.use(express.static('public')); // 정적 파일 서빙
 
-// ✅ Webhook 엔드포인트
 app.post('/webhook', upload.none(), (req, res) => {
   const data = req.body;
 
@@ -45,9 +45,11 @@ app.post('/webhook', upload.none(), (req, res) => {
   }
 
   const recommendation = Object.entries(drinks).sort((a, b) => b[1] - a[1])[0][0];
+  const score = drinks[recommendation];
   const message = `당신에게 어울리는 전통주는 "${recommendation}" 입니다!`;
 
-  res.redirect(`/result.html?drink=${recommendation}&message=${encodeURIComponent(message)}`);
+  // 메시지를 쿼리로 넘겨서 result.html이 직접 표시하도록
+  res.redirect(`/result.html?message=${encodeURIComponent(message)}`);
 });
 
 app.listen(port, () => {
